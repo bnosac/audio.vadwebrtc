@@ -1,0 +1,26 @@
+Package: audio.vadwebrtc
+Type: Package
+Title: Voice Activity Detection using the "webrtc" toolkit
+Version: 0.1
+Maintainer: Jan Wijffels <jwijffels@bnosac.be>
+Authors@R: c(
+    person('Jan', 'Wijffels', role = c('aut', 'cre', 'cph'), email = 'jwijffels@bnosac.be', comment = "R wrapper"), 
+    person('BNOSAC', role = 'cph', comment = "R wrapper"),
+    person('The WebRTC project authors', role = 'cph', comment = "Code in src/webrtc"),
+    person('David Reid', role = 'cph', comment = "Code in src/dr_libs"))
+Description: Voice Activity Detection using the "webrtc" toolkit. 
+    Identify the locations in audio wav files where there is an active voice. 
+    The is done based on a Gaussian Mixture Model implemented in the "webrtc" framework.
+License: MPL-2.0
+URL: https://github.com/bnosac/audio.vadwebrtc
+Encoding: UTF-8
+Depends:
+    R (>= 2.10)
+Imports:
+    Rcpp (>= 0.11.5)
+Suggests:
+    av
+LinkingTo: 
+    Rcpp,
+    abseil
+RoxygenNote: 7.1.2
