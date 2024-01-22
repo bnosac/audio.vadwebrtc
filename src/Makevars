@@ -1,0 +1,59 @@
+CXX_STD = CXX14
+PKG_LIBS = -pthread
+PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS -I./dr_libs -I./webrtc -I./webrtc/system_wrappers/include -I./webrtc/common_audio/third_party/spl_sqrt_floor -I./webrtc/common_audio/vad -I./webrtc/common_audio/signal_processing -I./webrtc/rtc_base
+
+SOURCES = webrtc/common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.c \
+    webrtc/common_audio/vad/vad_gmm.c \
+    webrtc/common_audio/vad/webrtc_vad.c \
+    webrtc/common_audio/vad/vad_core.c \
+    webrtc/common_audio/vad/vad_sp.c \
+    webrtc/common_audio/vad/vad_filterbank.c \
+    webrtc/common_audio/signal_processing/resample_fractional.c \
+    webrtc/common_audio/signal_processing/cross_correlation.c \
+    webrtc/common_audio/signal_processing/get_scaling_square.c \
+    webrtc/common_audio/signal_processing/complex_fft.c \
+    webrtc/common_audio/signal_processing/min_max_operations.c \
+    webrtc/common_audio/signal_processing/complex_bit_reverse.c \
+    webrtc/common_audio/signal_processing/resample_by_2_internal.c \
+    webrtc/common_audio/signal_processing/energy.c \
+    webrtc/common_audio/signal_processing/downsample_fast.c \
+    webrtc/common_audio/signal_processing/spl_init.c \
+    webrtc/common_audio/signal_processing/vector_scaling_operations.c \
+    webrtc/common_audio/signal_processing/resample_48khz.c \
+    webrtc/common_audio/signal_processing/spl_inl.c \
+    webrtc/common_audio/signal_processing/spl_sqrt.c \
+    webrtc/common_audio/signal_processing/division_operations.c \
+    webrtc/rtc_base/checks.cc \
+	rcpp_webrtc.cpp \
+	RcppExports.cpp
+
+OBJECTS = webrtc/common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.o \
+    webrtc/common_audio/vad/vad_gmm.o \
+    webrtc/common_audio/vad/webrtc_vad.o \
+    webrtc/common_audio/vad/vad_core.o \
+    webrtc/common_audio/vad/vad_sp.o \
+    webrtc/common_audio/vad/vad_filterbank.o \
+    webrtc/common_audio/signal_processing/resample_fractional.o \
+    webrtc/common_audio/signal_processing/cross_correlation.o \
+    webrtc/common_audio/signal_processing/get_scaling_square.o \
+    webrtc/common_audio/signal_processing/complex_fft.o \
+    webrtc/common_audio/signal_processing/min_max_operations.o \
+    webrtc/common_audio/signal_processing/complex_bit_reverse.o \
+    webrtc/common_audio/signal_processing/resample_by_2_internal.o \
+    webrtc/common_audio/signal_processing/energy.o \
+    webrtc/common_audio/signal_processing/downsample_fast.o \
+    webrtc/common_audio/signal_processing/spl_init.o \
+    webrtc/common_audio/signal_processing/vector_scaling_operations.o \
+    webrtc/common_audio/signal_processing/resample_48khz.o \
+    webrtc/common_audio/signal_processing/spl_inl.o \
+    webrtc/common_audio/signal_processing/spl_sqrt.o \
+    webrtc/common_audio/signal_processing/division_operations.o \
+    webrtc/rtc_base/checks.o \
+	rcpp_webrtc.o \
+	RcppExports.o
+
+all: clean
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)
+
