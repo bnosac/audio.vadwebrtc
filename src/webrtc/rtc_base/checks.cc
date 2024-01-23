@@ -71,9 +71,11 @@ RTC_NORETURN void WriteFatalLog(absl::string_view output) {
   __android_log_print(ANDROID_LOG_ERROR, RTC_LOG_TAG_ANDROID, "%s\n",
                       output_str.c_str());
 #endif
-  fflush(stdout);
-  fwrite(output.data(), output.size(), 1, stderr);
-  fflush(stderr);
+  std::string s1{output};
+  Rcpp::Rcout << s1 << "\n";
+  //fflush(stdout);
+  //fwrite(output.data(), output.size(), 1, stderr);
+  //fflush(stderr);
 #if defined(WEBRTC_WIN)
   DebugBreak();
 #endif
