@@ -80,10 +80,10 @@ Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, size_t frame_len
     if (ok < 0) {
         Rcpp::stop("Invalid combination of Hz and frame_length. We support 10, 20 and 30 ms frames and the rates 8000, 16000 and 32000 Hz.");
     }
-    int step = 160;
+    //int step = 160;
     const int16_t * temp = pcm16.data();
     // currently checking in 10ms frames, most likely to change
-    for(int i=0, ms=0; i < pcm16.size(); i+=160, ms+=10){
+    for(unsigned int i=0, ms=0; i < pcm16.size(); i+=160, ms+=10){
         int isActive = WebRtcVad_Process(vad, output["sample_rate"], temp, frame_length); // 1 = voice , 0 = not voice
         temp = temp + 160;
         if(isActive < 0){
