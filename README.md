@@ -2,6 +2,10 @@
 
 This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from the [webrtc](https://webrtc.googlesource.com/src/).
 
+
+https://github.com/bnosac/audio.vadwebrtc/assets/1710810/4e61e004-0206-43e0-82a8-51d279bfa9b6
+
+
 The package 
 
 - allows to detect the location of voice in audio using a Gaussian Mixture Model implemented in "webrtc" 
