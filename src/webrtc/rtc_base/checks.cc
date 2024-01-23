@@ -106,7 +106,7 @@ bool ParseArg(va_list* args, const CheckArgType** fmt, std::string* s) {
       AppendFormat(s, "%ld", va_arg(*args, long));
       break;
     case CheckArgType::kLongLong:
-      AppendFormat(s, "%lld", va_arg(*args, long long));
+      AppendFormat(s, "%llu", va_arg(*args, long long));
       break;
     case CheckArgType::kUInt:
       AppendFormat(s, "%u", va_arg(*args, unsigned));
@@ -121,7 +121,7 @@ bool ParseArg(va_list* args, const CheckArgType** fmt, std::string* s) {
       AppendFormat(s, "%g", va_arg(*args, double));
       break;
     case CheckArgType::kLongDouble:
-      AppendFormat(s, "%Lg", va_arg(*args, long double));
+      AppendFormat(s, "%Lf", va_arg(*args, long double));
       break;
     case CheckArgType::kCharP:
       s->append(va_arg(*args, const char*));
