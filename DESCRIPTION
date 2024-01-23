@@ -1,6 +1,6 @@
 Package: audio.vadwebrtc
 Type: Package
-Title: Voice Activity Detection using the 'webrtc' toolkit
+Title: Voice Activity Detection using the 'webrtc' Toolkit
 Version: 0.1
 Maintainer: Jan Wijffels <jwijffels@bnosac.be>
 Authors@R: c(
