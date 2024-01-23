@@ -27,7 +27,7 @@ vad$vad_segments
            5  6.79 6.99     FALSE
 ```
 
-Example on a simple of these audio
+Example of a simple plot of these audio and segments
 
 ```{r}
 library(av)
