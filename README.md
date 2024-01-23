@@ -25,6 +25,14 @@ Get a audio file in 16 bit with mono PCM samples (pcm_s16le codec) with a sampli
 library(audio.vadwebrtc)
 file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 vad  <- VAD(file, mode = "normal")
+vad
+Voice Activity Detection 
+  - file: D:/Jan/R/win-library/4.1/audio.vadwebrtc/extdata/test_wav.wav 
+  - sample rate: 16000 
+  - VAD type: webrtc-gmm, VAD mode: normal
+    - Percent of audio containing a voiced signal: 90.2% 
+    - Seconds voiced: 6.3 
+    - Seconds unvoiced: 0.7
 vad$vad_segments
  vad_segment start  end has_voice
            1  0.00 0.08     FALSE
@@ -34,7 +42,7 @@ vad$vad_segments
            5  6.79 6.99     FALSE
 ```
 
-Example of a simple plot of these audio and segments
+Example of a simple plot of these audio and voice segments
 
 ```{r}
 library(av)
@@ -46,7 +54,7 @@ abline(v = vad$vad_segments$end, col = "blue", lwd = 2)
 
 ![](tools/example-detection.png)
 
-Or show it interactively alongside R package wavesurfer: [wavesurfer](https://github.com/Athospd/wavesurfer )
+Or show it interactively alongside R package wavesurfer: [wavesurfer](https://github.com/Athospd/wavesurfer)
 
 ```{r}
 library(wavesurfer)
@@ -54,10 +62,10 @@ library(shiny)
 file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 vad  <- VAD(file, mode = "lowbitrate")
 anno <- data.frame(audio_id = vad$file, 
-                     region_id = vad$vad_segments$vad_segment, 
-                     start = vad$vad_segments$start, 
-                     end = vad$vad_segments$end, 
-                     label = ifelse(vad$vad_segments$has_voice, "Voiced", "Silent"))
+                   region_id = vad$vad_segments$vad_segment, 
+                   start = vad$vad_segments$start, 
+                   end = vad$vad_segments$end, 
+                   label = ifelse(vad$vad_segments$has_voice, "Voiced", "Silent"))
 anno <- subset(anno, label %in% "Silent")
   
 wavs_folder <- system.file(package = "audio.vadwebrtc", "extdata")
