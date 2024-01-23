@@ -20,23 +20,27 @@ VAD(
 \value{
 a list with elements
 \itemize{
-\item{file}
-\item{sample_rate}
-\item{channels}
-\item{samples}
-\item{format}
+\item{file: the path to the file}
+\item{sample_rate: the sample rate in Hz}
+\item{channels: the number of channels in the audio, as the algorithm requires mono audio this should only be 1}
+\item{samples: the number of samples in the data}
+\item{format: the format - should}
+\item{type: the type of model - currently only 'webrtc-gmm'}
+\item{mode: the provided VAD mode}
 \item{bitsPerSample}
 \item{bytesPerSample}
 \item{vad: a data.frame with columns millisecond, has_voice and vad_segment indicating if the audio contains an active voice signal at that millisecond}
 \item{vad_segments: a data.frame with columns vad_segment, start, end and has_voice where the start/end values are in seconds}
+\item{stats: a list with elements n_segments, n_segments_has_voice, n_segments_has_no_voice, seconds_has_voice, seconds_has_no_voice, pct_has_voice indicating the number of segments with voice and the duration of the voice/non-voice in the audio}
 }
 }
 \description{
-Detect the location of active Voice Activity Detection using webrtc
+Detect the location of active Voice Activity Detection using a Gaussian Mixture Model implemented in the "webrtc" framework.
 }
 \examples{
 file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 vad  <- VAD(file, mode = "normal")
+vad
 vad$vad_segments
 \dontrun{
 library(av)
@@ -50,4 +54,10 @@ av_audio_convert(file, output = "audio_pcm_16khz.wav",
                  format = "wav", channels = 1, sample_rate = 16000)
 vad <- VAD("audio_pcm_16khz.wav", mode = "normal")
 }
+
+file <- system.file(package = "audio.vadwebrtc", "extdata", "leak-test.wav")
+vad  <- VAD(file, mode = "normal")
+vad
+vad$vad_segments
+vad$vad_segments_info
 }
