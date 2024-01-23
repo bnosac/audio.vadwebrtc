@@ -1,6 +1,6 @@
 # audio.vadwebrtc
 
-This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from the [webrtc](https://webrtc.googlesource.com/src/).
+This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from [webrtc](https://webrtc.googlesource.com/src/).
 
 https://github.com/bnosac/audio.vadwebrtc/assets/1710810/6086999a-6348-460a-8fd6-2ab9fd2a5d17
 
@@ -11,7 +11,7 @@ The package
 
 The package was created with as main goal to remove non-speech audio segments before doing an automatic transcription using [audio.whisper](https://github.com/bnosac/audio.whisper) to avoid transcription hallucinations and therefore also contains 
 
-- functions to rewrite the timepoints of transcribed sentences where specific sections with non-audio are removed to make sure they align with the original audio signal
+- functionality to rewrite the timepoints of transcribed sentences where specific sections with non-audio are removed to make sure the timepoints align with the original audio signal
 
 ### Installation
 
