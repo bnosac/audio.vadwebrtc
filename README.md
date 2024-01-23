@@ -1,20 +1,18 @@
 # audio.vadwebrtc
 
-This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from [webrtc](https://webrtc.googlesource.com/src/).
+This repository contains an R package which is an Rcpp wrapper around the [webrtc](https://webrtc.googlesource.com/src/) Voice Activity Detection module.
 
 https://github.com/bnosac/audio.vadwebrtc/assets/1710810/6086999a-6348-460a-8fd6-2ab9fd2a5d17
 
-The package 
+The package was created with as main goal to remove non-speech audio segments before doing an automatic transcription using [audio.whisper](https://github.com/bnosac/audio.whisper) to avoid transcription hallucinations. It contains
 
-- allows to detect the location of voice in audio using a Gaussian Mixture Model implemented in "webrtc" 
-- allows to extract audio where there is voice / silence in a new audio file
-
-The package was created with as main goal to remove non-speech audio segments before doing an automatic transcription using [audio.whisper](https://github.com/bnosac/audio.whisper) to avoid transcription hallucinations and therefore also contains 
-
-- functionality to rewrite the timepoints of transcribed sentences where specific sections with non-audio are removed to make sure the timepoints align with the original audio signal
+- functions to detect the location of voice in audio using a Gaussian Mixture Model implemented in [webrtc](https://webrtc.googlesource.com/src/)
+- functions to extract audio where there is voice / silence in a new audio file
+- functionality to rewrite the timepoints of transcribed sentences where specific sections with non-audio are removed to make sure the timepoints of the transcriptions without silences align with the original audio signal
 
 ### Installation
 
+- The package is currently not on CRAN
 - For the *development* version of this package: `remotes::install_github("bnosac/audio.vadwebrtc")`
 
 Look to the documentation of the functions: `help(package = "audio.vadwebrtc")`
