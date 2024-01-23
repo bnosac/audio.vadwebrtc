@@ -2,9 +2,7 @@
 
 This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from the [webrtc](https://webrtc.googlesource.com/src/).
 
-
-https://github.com/bnosac/audio.vadwebrtc/assets/1710810/4e61e004-0206-43e0-82a8-51d279bfa9b6
-
+https://github.com/bnosac/audio.vadwebrtc/assets/1710810/6086999a-6348-460a-8fd6-2ab9fd2a5d17
 
 The package 
 
