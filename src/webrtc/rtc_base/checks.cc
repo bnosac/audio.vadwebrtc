@@ -1,3 +1,4 @@
+#include <Rcpp.h>
 /*
  *  Copyright 2006 The WebRTC Project Authors. All rights reserved.
  *
@@ -76,7 +77,8 @@ RTC_NORETURN void WriteFatalLog(absl::string_view output) {
 #if defined(WEBRTC_WIN)
   DebugBreak();
 #endif
-  abort();
+  //abort();
+  Rcpp::stop("webrtc error");
 }
 
 RTC_NORETURN void WriteFatalLog(const char* file,
