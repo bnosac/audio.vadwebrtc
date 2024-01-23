@@ -29,7 +29,7 @@ vad
 Voice Activity Detection 
   - file: D:/Jan/R/win-library/4.1/audio.vadwebrtc/extdata/test_wav.wav 
   - sample rate: 16000 
-  - VAD type: webrtc-gmm, VAD mode: normal
+  - VAD type: webrtc-gmm, VAD mode: normal, VAD by milliseconds: 10, VAD frame_length: 160
     - Percent of audio containing a voiced signal: 90.2% 
     - Seconds voiced: 6.3 
     - Seconds unvoiced: 0.7

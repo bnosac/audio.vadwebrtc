@@ -11,15 +11,15 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // vad_webrtc_detection
-Rcpp::List vad_webrtc_detection(std::string file, int mode, size_t frame_length);
-RcppExport SEXP _audio_vadwebrtc_vad_webrtc_detection(SEXP fileSEXP, SEXP modeSEXP, SEXP frame_lengthSEXP) {
+Rcpp::List vad_webrtc_detection(std::string file, int mode, int milliseconds);
+RcppExport SEXP _audio_vadwebrtc_vad_webrtc_detection(SEXP fileSEXP, SEXP modeSEXP, SEXP millisecondsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type file(fileSEXP);
     Rcpp::traits::input_parameter< int >::type mode(modeSEXP);
-    Rcpp::traits::input_parameter< size_t >::type frame_length(frame_lengthSEXP);
-    rcpp_result_gen = Rcpp::wrap(vad_webrtc_detection(file, mode, frame_length));
+    Rcpp::traits::input_parameter< int >::type milliseconds(millisecondsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vad_webrtc_detection(file, mode, milliseconds));
     return rcpp_result_gen;
 END_RCPP
 }

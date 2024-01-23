@@ -62,7 +62,7 @@ VadInst *vad_init(VadInst *vadptr){
 }
 
 // [[Rcpp::export]]
-Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, size_t frame_length = 160) {
+Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, int milliseconds = 10) {
     VadInst* vad = vad_create();
     vad = vad_init(vad);
     if (vad) {
@@ -76,6 +76,9 @@ Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, size_t frame_len
     // Check on the combination of the frame length and the sample_rate
     Rcpp::LogicalVector detections;
     Rcpp::IntegerVector detections_ms;
+    
+    size_t frame_length = 160;
+    frame_length = (size_t)((Rcpp::as<int>(output["sample_rate"]) / 1000) * milliseconds);
     int ok = WebRtcVad_ValidRateAndFrameLength(output["sample_rate"], frame_length);
     if (ok < 0) {
         Rcpp::stop("Invalid combination of Hz and frame_length. We support 10, 20 and 30 ms frames and the rates 8000, 16000 and 32000 Hz.");
@@ -83,9 +86,9 @@ Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, size_t frame_len
     //int step = 160;
     const int16_t * temp = pcm16.data();
     // currently checking in 10ms frames, most likely to change
-    for(unsigned int i=0, ms=0; i < pcm16.size(); i+=160, ms+=10){
-        int isActive = WebRtcVad_Process(vad, output["sample_rate"], temp, frame_length); // 1 = voice , 0 = not voice
-        temp = temp + 160;
+    for(unsigned int i=0, ms=0; i < pcm16.size(); i+=frame_length, ms+=milliseconds){
+        int isActive = WebRtcVad_Process(vad, output["sample_rate"], temp, frame_length); // 1 = voice , 0 = not voice, -1 = error
+        temp = temp + frame_length;
         if(isActive < 0){
             detections.push_back(NA_LOGICAL);
         }else{
@@ -94,6 +97,8 @@ Rcpp::List vad_webrtc_detection(std::string file, int mode = 3, size_t frame_len
         detections_ms.push_back(ms);
     }
     vad_free(vad);
+    output["milliseconds"] = milliseconds;
+    output["frame_length"] = frame_length;
     output["vad"] = Rcpp::DataFrame::create(
         Rcpp::Named("millisecond") = detections_ms, 
         Rcpp::Named("has_voice") = detections);
