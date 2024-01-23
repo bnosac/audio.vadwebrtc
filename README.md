@@ -1,8 +1,15 @@
 # audio.vadwebrtc
 
-This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from the webrtc project.
+This repository contains an R package which is an Rcpp wrapper around the Voice Activity Detection module from the [webrtc](https://webrtc.googlesource.com/src/).
 
-- The package allows to detect the location of voice in audio
+The package 
+
+- allows to detect the location of voice in audio using a Gaussian Mixture Model implemented in "webrtc" 
+- allows to extract audio where there is voice / silence in a new audio file
+
+The package was created with as main goal to remove non-speech audio segments before doing an automatic transcription using [audio.whisper](https://github.com/bnosac/audio.whisper) to avoid transcription hallucinations and therefore also contains 
+
+- functions to rewrite the timepoints of transcribed sentences where specific sections with non-audio are removed to make sure they align with the original audio signal
 
 ### Installation
 
@@ -39,6 +46,35 @@ abline(v = vad$vad_segments$end, col = "blue", lwd = 2)
 
 ![](tools/example-detection.png)
 
+Or show it interactively alongside R package wavesurfer: [wavesurfer](https://github.com/Athospd/wavesurfer )
+
+```{r}
+library(wavesurfer)
+library(shiny)
+file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
+vad  <- VAD(file, mode = "lowbitrate")
+anno <- data.frame(audio_id = vad$file, 
+                     region_id = vad$vad_segments$vad_segment, 
+                     start = vad$vad_segments$start, 
+                     end = vad$vad_segments$end, 
+                     label = ifelse(vad$vad_segments$has_voice, "Voiced", "Silent"))
+anno <- subset(anno, label %in% "Silent")
+  
+wavs_folder <- system.file(package = "audio.vadwebrtc", "extdata")
+shiny::addResourcePath("wav", wavs_folder)
+ui <- fluidPage(
+  wavesurferOutput("my_ws", height = "128px"),
+  tags$p("Press spacebar to toggle play/pause."),
+)
+server <- function(input, output, session) {
+  output$my_ws <- renderWavesurfer({
+    wavesurfer(audio = paste0("wav/", "test_wav.wav"), annotations = anno) %>%
+      ws_set_wave_color('#5511aa') %>%
+      ws_cursor()
+  })
+}
+shinyApp(ui = ui, server = server)
+```
 
 ## Support in text mining
 
