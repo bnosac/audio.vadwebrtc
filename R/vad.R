@@ -17,7 +17,7 @@
 #' }
 #' @export
 #' @examples 
-#' file <- system.file(package = "audio.vadwebrtc", "extdata", "test_audio.wav")
+#' file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 #' vad  <- VAD(file, mode = "normal")
 #' vad$vad_segments
 #' \dontrun{

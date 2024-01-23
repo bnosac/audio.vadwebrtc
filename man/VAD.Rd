@@ -35,7 +35,7 @@ a list with elements
 Detect the location of active Voice Activity Detection using webrtc
 }
 \examples{
-file <- system.file(package = "audio.vadwebrtc", "extdata", "test_audio.wav")
+file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 vad  <- VAD(file, mode = "normal")
 vad$vad_segments
 \dontrun{
@@ -50,5 +50,4 @@ av_audio_convert(file, output = "audio_pcm_16khz.wav",
                  format = "wav", channels = 1, sample_rate = 16000)
 vad <- VAD("audio_pcm_16khz.wav", mode = "normal")
 }
-
 }
