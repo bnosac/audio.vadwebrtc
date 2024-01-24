@@ -1,6 +1,6 @@
 CXX_STD = CXX14
 PKG_LIBS = -pthread
-PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS -I./dr_libs -I./webrtc -I./webrtc/system_wrappers/include -I./webrtc/common_audio/third_party/spl_sqrt_floor -I./webrtc/common_audio/vad -I./webrtc/common_audio/signal_processing -I./webrtc/rtc_base
+PKG_CPPFLAGS = -pthread -DSTRICT_R_HEADERS -I./dr_libs -I./webrtc -I./webrtc/system_wrappers/include -I./webrtc/common_audio/third_party/spl_sqrt_floor -I./webrtc/common_audio/vad -I./webrtc/common_audio/signal_processing -I./webrtc/rtc_base -DRTC_DISABLE_CHECK_MSG=1
 
 SOURCES = webrtc/common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.c \
     webrtc/common_audio/vad/vad_gmm.c \
