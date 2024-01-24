@@ -38,7 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - Files under the inst/extdata folder are also governed by the above license
 
-- dr_libs (all code under src/dr_libs): Public domain, single file audio decoding libraries for C and C++
+- dr_libs (all code under src/dr_libs as retrieved from https://github.com/mackron/dr_libs): Public domain, single file audio decoding libraries for C and C++
 
 This is free and unencumbered software released into the public domain.
 
