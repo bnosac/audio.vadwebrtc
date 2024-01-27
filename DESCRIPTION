@@ -24,3 +24,4 @@ LinkingTo:
     Rcpp,
     abseil
 RoxygenNote: 7.1.2
+SystemRequirements: C++14 or greater
