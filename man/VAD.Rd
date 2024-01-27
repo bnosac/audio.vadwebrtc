@@ -25,7 +25,7 @@ an objec of class \code{VAD} which is a list with elements
 \itemize{
 \item{file: the path to the file}
 \item{sample_rate: the sample rate of the audio file in Hz}
-\item{channels: the number of channels in the audio - as the algorithm requires mono audio this should only be 1}
+\item{channels: the number of channels in the audio - as the algorithm requires the audio to be mono this should only be 1}
 \item{samples: the number of samples in the data}
 \item{bitsPerSample: the number of bits per sample}
 \item{bytesPerSample: the number of bytes per sample}
@@ -40,7 +40,8 @@ an objec of class \code{VAD} which is a list with elements
 }
 \description{
 Detect the location of active voice in audio. 
-Voice Activity Detection implemented using a Gaussian Mixture Model from the "webrtc" framework.
+The Voice Activity Detection is implemented using a Gaussian Mixture Model from the "webrtc" framework. 
+It works with .wav audio files with a sample rate of 8, 16 or 32 Khz an can be applied over a window of eiher 10, 20 or 30 milliseconds.
 }
 \examples{
 file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
@@ -55,6 +56,7 @@ vad
 vad  <- VAD(file, mode = "normal", milliseconds = 10)
 vad
 vad$vad_segments
+
 \dontrun{
 library(av)
 x <- read_audio_bin(file)
@@ -62,6 +64,9 @@ plot(seq_along(x) / 16000, x, type = "l")
 abline(v = vad$vad_segments$start, col = "red", lwd = 2)
 abline(v = vad$vad_segments$end, col = "blue", lwd = 2)
 
+##
+## If you have audio which is not in mono or another sample rate
+## consider using R package av to convert to the desired format
 av_media_info(file)
 av_audio_convert(file, output = "audio_pcm_16khz.wav", 
                  format = "wav", channels = 1, sample_rate = 16000)

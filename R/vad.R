@@ -1,6 +1,7 @@
 #' @title Voice Activity Detection
 #' @description Detect the location of active voice in audio. 
-#' Voice Activity Detection implemented using a Gaussian Mixture Model from the "webrtc" framework. 
+#' The Voice Activity Detection is implemented using a Gaussian Mixture Model from the "webrtc" framework. 
+#' It works with .wav audio files with a sample rate of 8, 16 or 32 Khz an can be applied over a window of eiher 10, 20 or 30 milliseconds.
 #' @param file the path to an audio file which should be a file in 16 bit with mono PCM samples (pcm_s16le codec) with a sampling rate of either 8Khz, 16KHz or 32Khz
 #' @param mode character string with the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected
 #' @param milliseconds integer with the number of milliseconds indicating to compute by this number of milliseconds the VAD signal. Can only be 10, 20 or 30. Defaults to 10.
@@ -9,7 +10,7 @@
 #' \itemize{
 #' \item{file: the path to the file}
 #' \item{sample_rate: the sample rate of the audio file in Hz}
-#' \item{channels: the number of channels in the audio - as the algorithm requires mono audio this should only be 1}
+#' \item{channels: the number of channels in the audio - as the algorithm requires the audio to be mono this should only be 1}
 #' \item{samples: the number of samples in the data}
 #' \item{bitsPerSample: the number of bits per sample}
 #' \item{bytesPerSample: the number of bytes per sample}
@@ -35,6 +36,7 @@
 #' vad  <- VAD(file, mode = "normal", milliseconds = 10)
 #' vad
 #' vad$vad_segments
+#' 
 #' \dontrun{
 #' library(av)
 #' x <- read_audio_bin(file)
@@ -42,6 +44,9 @@
 #' abline(v = vad$vad_segments$start, col = "red", lwd = 2)
 #' abline(v = vad$vad_segments$end, col = "blue", lwd = 2)
 #' 
+#' ##
+#' ## If you have audio which is not in mono or another sample rate
+#' ## consider using R package av to convert to the desired format
 #' av_media_info(file)
 #' av_audio_convert(file, output = "audio_pcm_16khz.wav", 
 #'                  format = "wav", channels = 1, sample_rate = 16000)
