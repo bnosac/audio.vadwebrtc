@@ -105,12 +105,12 @@ print.VAD <- function(x, ...){
 
 
 
-collapse_segments <- function(x, collapse_silence_secs = 1){
-    x$has_voice <- ifelse(x$has_voice, x$has_voice, ifelse((x$end - x$start) < collapse_silence_secs, TRUE, x$has_voice))
-    grp <- rle(x$has_voice)
-    x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
-    x <- data.table::as.data.table(x)
-    x <- x[, list(start = min(start), end = max(end)), by = list(vad_segment, has_voice)]
-    x
-}
+# collapse_segments <- function(x, collapse_silence_secs = 1){
+#     x$has_voice <- ifelse(x$has_voice, x$has_voice, ifelse((x$end - x$start) < collapse_silence_secs, TRUE, x$has_voice))
+#     grp <- rle(x$has_voice)
+#     x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
+#     x <- data.table::as.data.table(x)
+#     x <- x[, list(start = min(start), end = max(end)), by = list(vad_segment, has_voice)]
+#     x
+# }
 #voiced <- collapse_segments(vad$vad_segments)
