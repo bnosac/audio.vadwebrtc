@@ -1,10 +1,11 @@
 #' @title Voice Activity Detection
-#' @description Detect the location of active Voice Activity Detection using a Gaussian Mixture Model implemented in the "webrtc" framework. 
+#' @description Detect the location of active voice in audio. 
+#' Voice Activity Detection implemented using a Gaussian Mixture Model from the "webrtc" framework. 
 #' @param file the path to an audio file which should be a file in 16 bit with mono PCM samples (pcm_s16le codec) with a sampling rate of either 8Khz, 16KHz or 32Khz
-#' @param mode the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected
+#' @param mode character string with the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected
 #' @param milliseconds integer with the number of milliseconds indicating to compute by this number of milliseconds the VAD signal. Can only be 10, 20 or 30. Defaults to 10.
 #' @param type character string with the type of VAD model. Only 'webrtc' currently.
-#' @return a list with elements
+#' @return an objec of class \code{VAD} which is a list with elements
 #' \itemize{
 #' \item{file: the path to the file}
 #' \item{sample_rate: the sample rate of the audio file in Hz}
@@ -99,3 +100,17 @@ print.VAD <- function(x, ...){
     cat("    - Seconds voiced:", round(x$vad_stats$seconds_has_voice, digits = 1), "\n")
     cat("    - Seconds unvoiced:", round(x$vad_stats$seconds_has_no_voice, digits = 1), "\n")
 }
+
+
+
+
+
+collapse_segments <- function(x, collapse_silence_secs = 1){
+    x$has_voice <- ifelse(x$has_voice, x$has_voice, ifelse((x$end - x$start) < collapse_silence_secs, TRUE, x$has_voice))
+    grp <- rle(x$has_voice)
+    x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
+    x <- data.table::as.data.table(x)
+    x <- x[, list(start = min(start), end = max(end)), by = list(vad_segment, has_voice)]
+    x
+}
+#voiced <- collapse_segments(vad$vad_segments)

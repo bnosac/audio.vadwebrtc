@@ -14,14 +14,14 @@ VAD(
 \arguments{
 \item{file}{the path to an audio file which should be a file in 16 bit with mono PCM samples (pcm_s16le codec) with a sampling rate of either 8Khz, 16KHz or 32Khz}
 
-\item{mode}{the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected}
+\item{mode}{character string with the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected}
 
 \item{milliseconds}{integer with the number of milliseconds indicating to compute by this number of milliseconds the VAD signal. Can only be 10, 20 or 30. Defaults to 10.}
 
 \item{type}{character string with the type of VAD model. Only 'webrtc' currently.}
 }
 \value{
-a list with elements
+an objec of class \code{VAD} which is a list with elements
 \itemize{
 \item{file: the path to the file}
 \item{sample_rate: the sample rate of the audio file in Hz}
@@ -39,7 +39,8 @@ a list with elements
 }
 }
 \description{
-Detect the location of active Voice Activity Detection using a Gaussian Mixture Model implemented in the "webrtc" framework.
+Detect the location of active voice in audio. 
+Voice Activity Detection implemented using a Gaussian Mixture Model from the "webrtc" framework.
 }
 \examples{
 file <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
