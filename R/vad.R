@@ -6,7 +6,7 @@
 #' @param mode character string with the type of voice detection, either 'normal', 'lowbitrate', 'aggressive' or 'veryaggressive' where 'veryaggressive' means more silences are detected
 #' @param milliseconds integer with the number of milliseconds indicating to compute by this number of milliseconds the VAD signal. Can only be 10, 20 or 30. Defaults to 10.
 #' @param type character string with the type of VAD model. Only 'webrtc' currently.
-#' @return an objec of class \code{VAD} which is a list with elements
+#' @return an object of class \code{VAD} which is a list with elements
 #' \itemize{
 #' \item{file: the path to the file}
 #' \item{sample_rate: the sample rate of the audio file in Hz}
