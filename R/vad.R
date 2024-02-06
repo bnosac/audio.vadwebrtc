@@ -110,12 +110,66 @@ print.VAD <- function(x, ...){
 
 
 
-# collapse_segments <- function(x, collapse_silence_secs = 1){
-#     x$has_voice <- ifelse(x$has_voice, x$has_voice, ifelse((x$end - x$start) < collapse_silence_secs, TRUE, x$has_voice))
-#     grp <- rle(x$has_voice)
-#     x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
-#     x <- data.table::as.data.table(x)
-#     x <- x[, list(start = min(start), end = max(end)), by = list(vad_segment, has_voice)]
-#     x
-# }
-#voiced <- collapse_segments(vad$vad_segments)
+#' @title Get from a Voice Activity Detection (VAD object) the segments which are voiced
+#' @description Postprocessing the Voice Activity Detection whereby sequences of 
+#' voiced/non-voiced segments are collapsed by 
+#' \enumerate{
+#' \item{first considering all non-voiced segments which are small in duration (default < 1 second) voiced}
+#' \item{next considering voiced segments with length less than a number of seconds (default < 1 second) non-voiced}
+#' }
+#' @param x an object of class VAD
+#' @param units character string with the units to use - either 'seconds' or 'milliseconds'  
+#' @param ... further arguments passed on to the function
+#' @return A data.frame with columns vad_segment, start, end, duration, has_voice indicating where in the audio voice is detected
+#' @export
+#' @examples 
+#' file   <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
+#' vad    <- VAD(file, mode = "normal", milliseconds = 30)
+#' vad$vad_segments
+#' voiced <- is.voiced(vad, silence_min = 0.2)
+#' voiced
+#' voiced <- is.voiced(vad, silence_min = 200, units = "milliseconds")
+#' voiced
+is.voiced <- function(x, ...){
+    UseMethod("is.voiced")
+}
+
+#' @export
+"is.voiced.webrtc-gmm" <- function(x, silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), units = c("seconds", "milliseconds"), ...){
+    x <- x$vad_segment
+    units <- match.arg(units)
+    silence_min <- silence_min / 1000
+    voiced_min  <- voiced_min / 1000
+    ## Consider silences smaller than 1 second as voiced
+    x$has_voice   <- ifelse(x$has_voice, x$has_voice, ifelse((x$end - x$start) < silence_min, TRUE, x$has_voice))
+    grp           <- rle(x$has_voice)
+    x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
+    x             <- segment_collapse(x)
+    ## Consider voiced elements smaller than 1 second as silences
+    x$has_voice   <- ifelse((x$end - x$start) < voiced_min & x$has_voice, FALSE, x$has_voice)
+    grp           <- rle(x$has_voice)
+    x$vad_segment <- rep(seq_along(grp$lengths), grp$lengths)
+    x             <- segment_collapse(x)
+    if(units == "seconds"){
+    }else if(units == "milliseconds"){
+        x$start <- x$start * 1000
+        x$end   <- x$end * 1000
+    }
+    x$duration <- x$end - x$start
+    x <- x[, c("vad_segment", "start", "end", "duration", "has_voice"), drop = FALSE]
+    x
+}
+
+
+segment_collapse <- function(x){
+    x <- do.call(rbind, lapply(split(x, list(x$vad_segment, x$has_voice), drop = TRUE), FUN = function(x){
+        data.frame(vad_segment = head(x$vad_segment, n = 1), 
+                   start       = min(x$start), 
+                   end         = max(x$end), 
+                   has_voice   = head(x$has_voice, n = 1), 
+                   stringsAsFactors = FALSE)
+    }))
+    x <- x[order(x$vad_segment, decreasing = FALSE), ]
+    rownames(x) <- NULL
+    x
+}

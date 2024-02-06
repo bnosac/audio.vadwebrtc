@@ -21,7 +21,7 @@ VAD(
 \item{type}{character string with the type of VAD model. Only 'webrtc' currently.}
 }
 \value{
-an objec of class \code{VAD} which is a list with elements
+an object of class \code{VAD} which is a list with elements
 \itemize{
 \item{file: the path to the file}
 \item{sample_rate: the sample rate of the audio file in Hz}
