@@ -4,14 +4,14 @@
 \alias{is.voiced}
 \title{Get from a Voice Activity Detection (VAD object) the segments which are voiced}
 \usage{
-is.voiced(x, ...)
+is.voiced(x, units = "seconds", ...)
 }
 \arguments{
 \item{x}{an object of class VAD}
 
-\item{...}{further arguments passed on to the function}
+\item{units}{character string with the units to use for the output and thresholds used in the function - either 'seconds' or 'milliseconds'}
 
-\item{units}{character string with the units to use - either 'seconds' or 'milliseconds'}
+\item{...}{further arguments passed on to the function}
 }
 \value{
 A data.frame with columns vad_segment, start, end, duration, has_voice indicating where in the audio voice is detected
@@ -28,7 +28,7 @@ voiced/non-voiced segments are collapsed by
 file   <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 vad    <- VAD(file, mode = "normal", milliseconds = 30)
 vad$vad_segments
-voiced <- is.voiced(vad, silence_min = 0.2)
+voiced <- is.voiced(vad, silence_min = 0.2, voiced_min = 1)
 voiced
 voiced <- is.voiced(vad, silence_min = 200, units = "milliseconds")
 voiced

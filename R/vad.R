@@ -118,7 +118,7 @@ print.VAD <- function(x, ...){
 #' \item{next considering voiced segments with length less than a number of seconds (default < 1 second) non-voiced}
 #' }
 #' @param x an object of class VAD
-#' @param units character string with the units to use - either 'seconds' or 'milliseconds'  
+#' @param units character string with the units to use for the output and thresholds used in the function - either 'seconds' or 'milliseconds'  
 #' @param ... further arguments passed on to the function
 #' @return A data.frame with columns vad_segment, start, end, duration, has_voice indicating where in the audio voice is detected
 #' @export
@@ -126,16 +126,18 @@ print.VAD <- function(x, ...){
 #' file   <- system.file(package = "audio.vadwebrtc", "extdata", "test_wav.wav")
 #' vad    <- VAD(file, mode = "normal", milliseconds = 30)
 #' vad$vad_segments
-#' voiced <- is.voiced(vad, silence_min = 0.2)
+#' voiced <- is.voiced(vad, silence_min = 0.2, voiced_min = 1)
 #' voiced
 #' voiced <- is.voiced(vad, silence_min = 200, units = "milliseconds")
 #' voiced
-is.voiced <- function(x, ...){
+is.voiced <- function(x, units = "seconds", ...){
     UseMethod("is.voiced")
 }
 
+#' @param silence_min minimum duration of a segment with only silence 
+#' @param voiced_min minimum duration of a voiced segment 
 #' @export
-"is.voiced.webrtc-gmm" <- function(x, silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), units = c("seconds", "milliseconds"), ...){
+"is.voiced.webrtc-gmm" <- function(x, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
     x <- x$vad_segment
     units <- match.arg(units)
     silence_min <- silence_min / 1000
