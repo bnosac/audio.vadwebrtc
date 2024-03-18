@@ -162,6 +162,13 @@ is.voiced <- function(x, units = "seconds", ...){
     x
 }
 
+#' @param silence_min minimum duration of a segment with only silence 
+#' @param voiced_min minimum duration of a voiced segment 
+#' @export
+is.voiced.default <- function(x, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
+    "is.voiced.webrtc-gmm"(x, units = units, silence_min = silence_min, voiced_min = voiced_min, ...)
+}
+
 
 segment_collapse <- function(x){
     x <- do.call(rbind, lapply(split(x, list(x$vad_segment, x$has_voice), drop = TRUE), FUN = function(x){
