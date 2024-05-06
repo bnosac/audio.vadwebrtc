@@ -1,7 +1,7 @@
 Package: audio.vadwebrtc
 Type: Package
 Title: Voice Activity Detection using the 'webrtc' Toolkit
-Version: 0.1
+Version: 0.2
 Maintainer: Jan Wijffels <jwijffels@bnosac.be>
 Authors@R: c(
     person('Jan', 'Wijffels', role = c('aut', 'cre', 'cph'), email = 'jwijffels@bnosac.be', comment = "R wrapper"), 
@@ -20,7 +20,8 @@ Imports:
     Rcpp (>= 0.11.5),
     utils
 Suggests:
-    av
+    av,
+    audio
 LinkingTo: 
     Rcpp,
     abseil

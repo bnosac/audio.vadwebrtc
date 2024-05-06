@@ -101,6 +101,10 @@ print.VAD <- function(x, ...){
     cat("  - file:", x$file, "\n")
     cat("  - sample rate:", x$sample_rate, "\n")
     cat("  - VAD type: ", x$type, ", VAD mode: ", x$mode, ", VAD by milliseconds: ", x$milliseconds, ", VAD frame_length: ", x$frame_length, "\n", sep = "")
+    if("channel" %in% names(x$vad_segments)){
+        x$vad_segments <- x$vad_segments[x$vad_segments$channel %in% 0, ]
+        x$vad_stats <- x$vad_stats[x$vad_stats$channel %in% 0, ]
+    }
     cat("    - Percent of audio containing a voiced signal:", paste(round(100*x$vad_stats$pct_has_voice, digits = 1), "%", sep = ""), "\n")
     cat("    - Seconds voiced:", round(x$vad_stats$seconds_has_voice, digits = 1), "\n")
     cat("    - Seconds unvoiced:", round(x$vad_stats$seconds_has_no_voice, digits = 1), "\n")
@@ -117,7 +121,8 @@ print.VAD <- function(x, ...){
 #' \item{first considering all non-voiced segments which are small in duration (default < 1 second) voiced}
 #' \item{next considering voiced segments with length less than a number of seconds (default < 1 second) non-voiced}
 #' }
-#' @param x an object of class VAD
+#' @param x an object of class VAD as returned by \code{\link{VAD}} or \code{\link{VAD_channel}}
+#' @param channel integer with the channel, showing the voiced section of that channel only. Only used for segments extracted with \code{\link{VAD_channel}}
 #' @param units character string with the units to use for the output and thresholds used in the function - either 'seconds' or 'milliseconds'  
 #' @param ... further arguments passed on to the function
 #' @return A data.frame with columns vad_segment, start, end, duration, has_voice indicating where in the audio voice is detected
@@ -130,14 +135,15 @@ print.VAD <- function(x, ...){
 #' voiced
 #' voiced <- is.voiced(vad, silence_min = 200, units = "milliseconds")
 #' voiced
-is.voiced <- function(x, units = "seconds", ...){
+is.voiced <- function(x, channel = 0, units = "seconds", ...){
     UseMethod("is.voiced")
 }
 
+#' @param channel integer with the channel, showing the voiced section of that channel only
 #' @param silence_min minimum duration of a segment with only silence 
 #' @param voiced_min minimum duration of a voiced segment 
 #' @export
-"is.voiced.webrtc-gmm" <- function(x, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
+"is.voiced.webrtc-gmm" <- function(x, channel = 0, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
     x <- x$vad_segment
     units <- match.arg(units)
     silence_min <- silence_min / 1000
@@ -162,11 +168,21 @@ is.voiced <- function(x, units = "seconds", ...){
     x
 }
 
+#' @param channel integer with the channel, showing the voiced section of that channel only
 #' @param silence_min minimum duration of a segment with only silence 
 #' @param voiced_min minimum duration of a voiced segment 
 #' @export
-is.voiced.default <- function(x, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
-    "is.voiced.webrtc-gmm"(x, units = units, silence_min = silence_min, voiced_min = voiced_min, ...)
+"is.voiced.webrtc-gmm-bychannel" <- function(x, channel = 0, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
+    x$vad_segments <- x$vad_segments[x$vad_segments$channel %in% channel, ]
+    "is.voiced.webrtc-gmm"(x, channel = channel, units = units, silence_min = silence_min, voiced_min = voiced_min)
+}
+
+#' @param channel integer with the channel, showing the voiced section of that channel only
+#' @param silence_min minimum duration of a segment with only silence 
+#' @param voiced_min minimum duration of a voiced segment 
+#' @export
+is.voiced.default <- function(x, channel = 0, units = c("seconds", "milliseconds"), silence_min = ifelse(units == "milliseconds", 1000, 1), voiced_min = ifelse(units == "milliseconds", 1000, 1), ...){
+    "is.voiced.webrtc-gmm"(x, channel = channel, units = units, silence_min = silence_min, voiced_min = voiced_min, ...)
 }
 
 
@@ -182,3 +198,111 @@ segment_collapse <- function(x){
     rownames(x) <- NULL
     x
 }
+
+
+
+#' @title Voice Activity Detection per channel
+#' @description Voice Activity Detection per channel. 
+#' Transforms the audio file to a wav file with the provided \code{sample_rate} and perform the voice activity detection per channel.
+#' @param file the path to an audio file
+#' @param sample_rate integer with the \code{sample_rate} to convert the file to. Passed on to \code{\link[av]{av_audio_convert}}
+#' @param channels character string - either 'default' or 'all' indicating to do the voice activity detection for each channel independently ('default') or for all channels independently as well as all channels together ('all')
+#' @param ... further arguments passed on to \code{\link{VAD}}
+#' @return an object of class \code{webrtc-gmm-bychannel} which is a list with elements
+#' \itemize{
+#' \item{file: the path to the file}
+#' \item{duration_secs: seconds}
+#' \item{sample_rate: the sample rate of the audio file in Hz}
+#' \item{channels: the number of channels in the audio}
+#' \item{samples: the number of samples in the data}
+#' \item{bitsPerSample: the number of bits per sample}
+#' \item{bytesPerSample: the number of bytes per sample}
+#' \item{type: the type of VAD model - currently only 'webrtc-gmm'}
+#' \item{mode: the provided VAD mode}
+#' \item{milliseconds: the provided milliseconds - either by 10, 20 or 30 ms frames}
+#' \item{frame_length: the frame length corresponding to the provided milliseconds}
+#' \item{vad_segments: a data.frame with columns channel, vad_segment, start, end and has_voice where the start/end values are in seconds}
+#' \item{vad_stats: a list with elements channel, n_segments, n_segments_has_voice, n_segments_has_no_voice, seconds_has_voice, seconds_has_no_voice, pct_has_voice indicating the number of segments with voice and the duration of the voice/non-voice in the audio}
+#' }
+#' Channel 0 means all audio combined in 1 channel.
+#' @export
+#' @examples 
+#' library(audio)
+#' library(av)
+#' file <- system.file(package = "audio.vadwebrtc", "extdata", "stereo.mp3")
+#' vad  <- VAD_channel(file, sample_rate = 32000, 
+#'                     mode = "normal", milliseconds = 10, channels = "all")
+#' vad
+#' vad$vad_segments
+#' voiced <- is.voiced(vad, channel = 0, silence_min = 0.2, voiced_min = 1)
+#' voiced
+#' voiced <- is.voiced(vad, channel = 1, silence_min = 0.2, voiced_min = 1)
+#' voiced
+#' voiced <- is.voiced(vad, channel = 2, silence_min = 0.2, voiced_min = 1)
+#' voiced
+VAD_channel <- function(file, sample_rate = 16000, channels = c("default", "all"), ...){
+    items <- match.arg(channels)
+    requireNamespace("av")
+    i        <- av::av_media_info(file)
+    duration <- i$duration
+    channels <- i$audio$channels
+    #tempfile_wav_allchannels <- tempfile(pattern = "allchannels_", fileext = ".wav", tmpdir = tempdir(check = TRUE))
+    #tempfile_wav_onechannel  <- tempfile(pattern = "onechannel_", fileext = ".wav", tmpdir = tempdir(check = TRUE))
+    tempfile_wav_allchannels <- tempfile(pattern = "allchannels_", fileext = ".wav")
+    tempfile_wav_onechannel  <- tempfile(pattern = "onechannel_", fileext = ".wav")
+    on.exit({
+        els <- c(tempfile_wav_allchannels, tempfile_wav_onechannel)
+        invisible(file.remove(els[file.exists(els)]))   
+    })
+    av::av_audio_convert(audio = file, output = tempfile_wav_allchannels, format = "wav", sample_rate = sample_rate, verbose = FALSE)
+    av::av_audio_convert(audio = file, output = tempfile_wav_onechannel, format = "wav", sample_rate = sample_rate, verbose = FALSE, channels = 1)
+    ## By channel - VAD
+    out <- list()
+    if(channels > 1){
+        requireNamespace("audio")
+        audio_content <- audio::load.wave(tempfile_wav_allchannels)
+        out <- lapply(seq_len(nrow(audio_content)), FUN = function(i, ...){
+            ## Get audio of that channel + save to file
+            audio_content_channel <- audio_content[i, , drop = FALSE]
+            audio::save.wave(audio_content_channel, tempfile_wav_onechannel)
+            ## Do the voice activity detection, add channel information to identified voiced/non-voiced segments
+            vad <- audio.vadwebrtc::VAD(tempfile_wav_onechannel, ...)
+            vad$vad_segments$channel <- rep(i, nrow(vad$vad_segments))
+            vad$vad_stats$channel    <- i
+            vad[c("vad_segments", "vad_stats", "samples", "bitsPerSample", "bytesPerSample", "milliseconds", "frame_length", "type", "mode")]
+        }, ...)
+    }
+    if(items == "all"){
+        ## Do the voice activity detection for all channels combined and call it channel 0
+        vad <- audio.vadwebrtc::VAD(tempfile_wav_allchannels, ...)
+        vad$vad_segments$channel <- rep(0, nrow(vad$vad_segments))
+        vad$vad_stats$channel    <- 0
+        vad                      <- vad[c("vad_segments", "vad_stats", "samples", "bitsPerSample", "bytesPerSample", "milliseconds", "frame_length", "type", "mode")]
+        out[[length(out) + 1]]   <- vad
+    }
+    #lapply(out, FUN = function(x) x[c("samples", "bitsPerSample", "bytesPerSample", "milliseconds", "frame_length", "type", "mode")])
+    settings <- out[[length(out)]][c("samples", "bitsPerSample", "bytesPerSample", "milliseconds", "frame_length", "type", "mode")]
+    settings$samples <- NA
+    out <- lapply(out, FUN = function(x) x[c("vad_segments", "vad_stats")]) 
+    out <- lapply(out, unclass)
+    
+    results <- list(file = file,
+                    duration_secs = duration,
+                    sample_rate = i$audio$sample_rate, 
+                    channels = channels,
+                    samples = settings$samples,
+                    bitsPerSample = settings$bitsPerSample,
+                    bytesPerSample = settings$bytesPerSample,
+                    milliseconds = settings$milliseconds,
+                    frame_length = settings$frame_length,
+                    type = settings$type,
+                    mode = settings$mode,
+                    vad_segments = do.call(rbind, lapply(out, FUN = function(x) x$vad_segments)),
+                    vad_stats = do.call(rbind, lapply(out, FUN = function(x) as.data.frame(x$vad_stats))))
+    results$vad_segments <- results$vad_segments[, c('channel', 'vad_segment', 'start', 'end', 'has_voice')]
+    results$vad_stats <- results$vad_stats[, c('channel', 'n_segments', 'n_segments_has_voice', 'n_segments_has_no_voice', 'seconds_has_voice', 'seconds_has_no_voice', 'pct_has_voice')]
+    class(results) <- c("VAD", "webrtc-gmm-bychannel")
+    results
+}
+
+

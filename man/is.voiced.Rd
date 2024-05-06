@@ -4,10 +4,12 @@
 \alias{is.voiced}
 \title{Get from a Voice Activity Detection (VAD object) the segments which are voiced}
 \usage{
-is.voiced(x, units = "seconds", ...)
+is.voiced(x, channel = 0, units = "seconds", ...)
 }
 \arguments{
-\item{x}{an object of class VAD}
+\item{x}{an object of class VAD as returned by \code{\link{VAD}} or \code{\link{VAD_channel}}}
+
+\item{channel}{integer with the channel, showing the voiced section of that channel only. Only used for segments extracted with \code{\link{VAD_channel}}}
 
 \item{units}{character string with the units to use for the output and thresholds used in the function - either 'seconds' or 'milliseconds'}
 
